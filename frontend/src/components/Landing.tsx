@@ -1,67 +1,39 @@
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Room } from "./Room";
 
 export const Landing = () => {
     const [name, setName] = useState("");
-    const [localAudioTrack, setLocalAudioTrack] =
-        useState<MediaStreamTrack | null>(null);
-    const [localVideoTrack, setlocalVideoTrack] =
-        useState<MediaStreamTrack | null>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
-
     const [joined, setJoined] = useState(false);
-
-    const getCam = async () => {
-        const stream = await window.navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true,
-        });
-        // MediaStream
-        const audioTrack = stream.getAudioTracks()[0];
-        const videoTrack = stream.getVideoTracks()[0];
-        setLocalAudioTrack(audioTrack);
-        setlocalVideoTrack(videoTrack);
-        if (!videoRef.current) {
-            return;
-        }
-        videoRef.current.srcObject = new MediaStream([videoTrack]);
-        videoRef.current.play();
-        // MediaStream
-    };
+    const [waiting, setWaiting] = useState(false);
 
     useEffect(() => {
-        if (videoRef && videoRef.current) {
-            getCam();
+        if (joined) {
+            setWaiting(true);
+            // Simulate waiting for a room
+            setTimeout(() => {
+                setWaiting(false);
+            }, 2000); // Simulating a 3-second wait before being connected
         }
-    }, [videoRef]);
+    }, [joined]);
 
     if (!joined) {
         return (
             <div>
-                <video autoPlay ref={videoRef}></video>
                 <input
                     type="text"
-                    onChange={(e) => {
-                        setName(e.target.value);
-                    }}
-                ></input>
-                <button
-                    onClick={() => {
-                        setJoined(true);
-                    }}
-                >
-                    Join
-                </button>
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your name"
+                />
+                <button onClick={() => setJoined(true)}>Join</button>
             </div>
         );
     }
 
-    return (
-        <Room
-            name={name}
-            localAudioTrack={localAudioTrack}
-            localVideoTrack={localVideoTrack}
-        />
-    );
+    if (waiting) {
+        return (
+            <div>Please wait while we are searching a chatter for you...</div>
+        );
+    }
+
+    return <Room name={name} />;
 };
