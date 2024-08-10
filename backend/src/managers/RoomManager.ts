@@ -1,3 +1,4 @@
+import { Socket } from "socket.io/dist/socket";
 import { User } from "./UserManager";
 
 let GLOBAL_ROOM_ID = 1;
@@ -15,15 +16,15 @@ export class RoomManager {
 
     createRoom(user1: User, user2: User) {
         const roomId = this.generate().toString();
-        this.rooms.set(roomId.toString(), { user1, user2 });
+        this.rooms.set(roomId, { user1, user2 });
 
         user1.socket.emit("join-room", {
             roomId,
-            connectedUserName: user2.name,
+            connectedUserName: user2.name, // Send the actual name of user2 to user1
         });
         user2.socket.emit("join-room", {
             roomId,
-            connectedUserName: user1.name,
+            connectedUserName: user1.name, // Send the actual name of user1 to user2
         });
     }
 

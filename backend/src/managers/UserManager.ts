@@ -7,6 +7,9 @@ export interface User {
 }
 
 export class UserManager {
+    getUsers(): any {
+        throw new Error("Method not implemented.");
+    }
     private users: User[];
     private queue: string[];
     private roomManager: RoomManager;
@@ -18,6 +21,7 @@ export class UserManager {
     }
 
     addUser(name: string, socket: Socket) {
+        console.log("User added", name);
         this.users.push({ name, socket });
         this.queue.push(socket.id);
         socket.emit("lobby");
@@ -26,8 +30,8 @@ export class UserManager {
     }
 
     removeUser(socketId: string) {
-        this.users = this.users.filter(x => x.socket.id !== socketId);
-        this.queue = this.queue.filter(x => x !== socketId);
+        this.users = this.users.filter((x) => x.socket.id !== socketId);
+        this.queue = this.queue.filter((x) => x !== socketId);
     }
 
     clearQueue() {
@@ -38,8 +42,8 @@ export class UserManager {
         const id1 = this.queue.shift();
         const id2 = this.queue.shift();
 
-        const user1 = this.users.find(x => x.socket.id === id1);
-        const user2 = this.users.find(x => x.socket.id === id2);
+        const user1 = this.users.find((x) => x.socket.id === id1);
+        const user2 = this.users.find((x) => x.socket.id === id2);
 
         if (user1 && user2) {
             this.roomManager.createRoom(user1, user2);

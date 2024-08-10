@@ -17,12 +17,17 @@ const userManager = new UserManager();
 
 io.on("connection", (socket: Socket) => {
     console.log("a user connected");
-    userManager.addUser("randomName", socket);
+
+    socket.on("join-lobby", ({ name }) => {
+        userManager.addUser(name, socket);
+    });
 
     socket.on("disconnect", () => {
         console.log("user disconnected");
         userManager.removeUser(socket.id);
     });
+
+    return true;
 });
 
 server.listen(3000, () => {
