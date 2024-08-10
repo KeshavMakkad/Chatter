@@ -33,9 +33,24 @@ export class RoomManager {
         if (!room) {
             return;
         }
-        const receivingUser =
+        const sender =
+            room.user1.socket.id === senderSocketId ? room.user1 : room.user2;
+        const receiver =
             room.user1.socket.id === senderSocketId ? room.user2 : room.user1;
-        receivingUser.socket.emit("receive-message", { message, roomId });
+
+        console.log(
+            `Sending message: "${message}" from ${sender.name} to both users`
+        );
+
+        // Send the message to both users with sender's name
+        // sender.socket.emit("receive-message", {
+        //     message,
+        //     senderName: sender.name,
+        // });
+        receiver.socket.emit("receive-message", {
+            message,
+            senderName: sender.name,
+        });
     }
 
     generate() {

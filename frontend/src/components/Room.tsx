@@ -8,23 +8,43 @@ interface RoomProps {
     connectedUserName: string;
 }
 
+interface Message {
+    message: string;
+    senderName: string;
+}
+
 export const Room = ({
     name,
     socket,
     roomId,
     connectedUserName,
 }: RoomProps) => {
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [currentMessage, setCurrentMessage] = useState("");
 
     useEffect(() => {
         if (socket) {
-            socket.on("receive-message", ({ message }) => {
-                setMessages((prevMessages) => [...prevMessages, message]);
-            });
+            socket.on(
+                "receive-message",
+                ({
+                    message,
+                    senderName,
+                }: {
+                    message: string;
+                    senderName: string;
+                }) => {
+                    console.log(
+                        `Received message: "${message}" from ${senderName}`
+                    );
+                    setMessages((prevMessages) => [
+                        ...prevMessages,
+                        { message, senderName },
+                    ]);
+                }
+            );
 
             return () => {
-                socket.off("receive-message"); // Clean up the event listener
+                socket.off("receive-message");
             };
         }
     }, [socket]);
@@ -32,7 +52,10 @@ export const Room = ({
     const sendMessage = () => {
         if (socket && roomId) {
             socket.emit("send-message", { message: currentMessage, roomId });
-            setMessages((prevMessages) => [...prevMessages, currentMessage]);
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { message: currentMessage, senderName: name },
+            ]);
             setCurrentMessage("");
         }
     };
@@ -43,7 +66,9 @@ export const Room = ({
             <div>You are connected with {connectedUserName}</div>
             <div>
                 {messages.map((msg, index) => (
-                    <p key={index}>{msg}</p>
+                    <p key={index}>
+                        <strong>{msg.senderName}:</strong> {msg.message}
+                    </p>
                 ))}
             </div>
             <input
