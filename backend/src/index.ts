@@ -19,6 +19,7 @@ io.on("connection", (socket: Socket) => {
     console.log("a user connected");
 
     socket.on("join-lobby", ({ name }) => {
+        console.log("Received join-lobby with name:", name);
         userManager.addUser(name, socket);
     });
 

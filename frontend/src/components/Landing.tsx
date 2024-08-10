@@ -20,7 +20,8 @@ export const Landing = () => {
             const socket = io(URL);
             setSocket(socket);
 
-            socket.emit("join-lobby", { name }); // Send the user's actual name
+            console.log("Emitting join-lobby with name:", name); // Add this to check if it's emitted
+            socket.emit("join-lobby", { name });
 
             socket.on("join-room", ({ roomId, connectedUserName }) => {
                 setRoomId(roomId);

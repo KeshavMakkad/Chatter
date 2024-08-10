@@ -42,8 +42,14 @@ export class UserManager {
         const id1 = this.queue.shift();
         const id2 = this.queue.shift();
 
-        const user1 = this.users.find((x) => x.socket.id === id1);
-        const user2 = this.users.find((x) => x.socket.id === id2);
+        const user1 = this.users.find((x) => {
+            // console.log(x.name, id1);
+            return x.socket.id === id1;
+        });
+        const user2 = this.users.find((x) => {
+            // console.log(x.name, id2);
+            return x.socket.id === id2;
+        });
 
         if (user1 && user2) {
             this.roomManager.createRoom(user1, user2);
