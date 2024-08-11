@@ -1,7 +1,7 @@
 import React from "react";
 import { Socket } from "socket.io-client";
-import { MessageList } from "./MessageList.tsx";
-import { MessageInput } from "./MessageInput.tsx";
+import { MessageList } from "./MessageList";
+import { MessageInput } from "./MessageInput";
 import "./Room.css";
 
 interface RoomProps {
@@ -50,6 +50,10 @@ export const Room: React.FC<RoomProps> = ({
     }, [socket]);
 
     const sendMessage = () => {
+        if (currentMessage.trim() === "") {
+            // Prevent sending if the message is empty or just whitespace
+            return;
+        }
         if (socket && roomId) {
             socket.emit("send-message", { message: currentMessage, roomId });
             setMessages((prevMessages) => [
