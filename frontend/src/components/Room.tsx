@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import { Socket } from "socket.io-client";
+import { MessageList } from "./MessageList.tsx";
+import { MessageInput } from "./MessageInput.tsx";
+import "./Room.css";
 
 interface RoomProps {
     name: string;
@@ -13,16 +16,16 @@ interface Message {
     senderName: string;
 }
 
-export const Room = ({
+export const Room: React.FC<RoomProps> = ({
     name,
     socket,
     roomId,
     connectedUserName,
-}: RoomProps) => {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [currentMessage, setCurrentMessage] = useState("");
+}) => {
+    const [messages, setMessages] = React.useState<Message[]>([]);
+    const [currentMessage, setCurrentMessage] = React.useState("");
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (socket) {
             socket.on(
                 "receive-message",
@@ -33,9 +36,6 @@ export const Room = ({
                     message: string;
                     senderName: string;
                 }) => {
-                    console.log(
-                        `Received message: "${message}" from ${senderName}`
-                    );
                     setMessages((prevMessages) => [
                         ...prevMessages,
                         { message, senderName },
@@ -61,22 +61,17 @@ export const Room = ({
     };
 
     return (
-        <div>
-            <h1>Welcome, {name}</h1>
-            <div>You are connected with {connectedUserName}</div>
-            <div>
-                {messages.map((msg, index) => (
-                    <p key={index}>
-                        <strong>{msg.senderName}:</strong> {msg.message}
-                    </p>
-                ))}
-            </div>
-            <input
-                type="text"
-                value={currentMessage}
-                onChange={(e) => setCurrentMessage(e.target.value)}
+        <div className="room">
+            <header className="room-header">
+                <h1>Welcome, {name}</h1>
+                <div>You are connected with {connectedUserName}</div>
+            </header>
+            <MessageList messages={messages} />
+            <MessageInput
+                currentMessage={currentMessage}
+                setCurrentMessage={setCurrentMessage}
+                sendMessage={sendMessage}
             />
-            <button onClick={sendMessage}>Send</button>
         </div>
     );
 };

@@ -19,8 +19,12 @@ export const Landing = () => {
         null
     );
 
-    useEffect(() => {
-        if (joined) {
+    const handleStartChat = () => {
+        if (name.trim() === "") {
+            setName("Guest");
+        }
+
+        if (name.trim() !== "") {
             setWaiting(true);
             const socket = io(URL);
             setSocket(socket);
@@ -34,31 +38,51 @@ export const Landing = () => {
                 setWaiting(false);
             });
 
+            socket.on("disconnect", () => {
+                setWaiting(false);
+            });
+
+            // Clean up function
             return () => {
                 socket.disconnect();
             };
         }
+    };
+
+    useEffect(() => {
+        if (joined) {
+            handleStartChat();
+        }
+        return () => {
+            socket?.disconnect();
+        };
     }, [joined]);
 
     const handleJoin = () => {
-        if (name.trim() !== "") {
-            setJoined(true);
+        if (name.trim() === "") {
+            setName("Guest");
         }
+        setJoined(true);
+    };
+
+    const handleHeaderStartChat = () => {
+        handleStartChat();
+        setJoined(true); // Ensure chat starts if triggered from the header
     };
 
     if (!joined) {
         return (
             <div>
-                <HomeHeader />
+                <HomeHeader onStartChat={handleHeaderStartChat} />
                 <div className="home-body">
                     <div className="welcome-text">
                         <h1 className="hey-text">Hey</h1>
                         <Typing
                             className="typing-text"
                             text={[
-                                "How are you?",
-                                "Let's talk",
-                                "Need a friend?",
+                                "Still Single?",
+                                "Let's Chat...",
+                                "Make Friends :)",
                             ]}
                         />
                     </div>
@@ -97,5 +121,5 @@ export const Landing = () => {
         );
     }
 
-    return null; // Optionally handle any other cases, such as an error.
+    return null;
 };

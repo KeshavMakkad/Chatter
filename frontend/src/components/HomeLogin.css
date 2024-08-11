@@ -4,18 +4,20 @@
     align-items: center;
     justify-content: center;
     padding: 0 2rem;
+    width: 20%;
 }
 
 .display-name {
     resize: none;
     width: 100%;
     max-width: 300px;
-    height: 2rem;
+    height: 5vh;
     border: 2px solid black;
     border-radius: 10px;
-    padding: 5px;
+    padding: 5px 10px 0 0;
     font-size: medium;
     margin: 2rem 0;
+    text-align: center;
 }
 
 .home-login > button {

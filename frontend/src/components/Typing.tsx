@@ -57,7 +57,9 @@ function Typing({
     return (
         <div className="typing-effect">
             {displayedText}
-            <span className="caret">|</span>
+            <span className="caret" style={{ color: "gray" }}>
+                |
+            </span>
         </div>
     );
 }

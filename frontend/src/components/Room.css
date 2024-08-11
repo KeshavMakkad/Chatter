@@ -1,0 +1,57 @@
+.room {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 10px;
+    background-color: #f4f4f9;
+}
+
+.room-header {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #005f73;
+    color: white;
+    border-radius: 5px;
+}
+
+.room-header h1 {
+    margin: 0;
+}
+
+.message-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.message {
+    margin: 5px 0;
+}
+
+.message-input {
+    display: flex;
+    gap: 10px;
+}
+
+.message-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.message-input button {
+    padding: 10px;
+    border: none;
+    background-color: #008cba;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.message-input button:hover {
+    background-color: #005f73;
+}
