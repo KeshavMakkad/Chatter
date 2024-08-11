@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
-import { Room } from "./Room";
 import { io, Socket } from "socket.io-client";
+import HomeHeader from "./HomeHeader.tsx";
+import "./Home.css";
+import "./HomeLogin.css";
+import "./WelcomeText.css";
+import { Room } from "./Room";
+import Typing from "./Typing.tsx";
 
 const URL = "http://localhost:3000";
 
@@ -20,7 +25,7 @@ export const Landing = () => {
             const socket = io(URL);
             setSocket(socket);
 
-            console.log("Emitting join-lobby with name:", name); // Add this to check if it's emitted
+            console.log("Emitting join-lobby with name:", name);
             socket.emit("join-lobby", { name });
 
             socket.on("join-room", ({ roomId, connectedUserName }) => {
@@ -35,18 +40,43 @@ export const Landing = () => {
         }
     }, [joined]);
 
+    const handleJoin = () => {
+        if (name.trim() !== "") {
+            setJoined(true);
+        }
+    };
+
     if (!joined) {
         return (
-            <>
-                <div>
-                    <input
-                        type="text"
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter your name"
-                    />
-                    <button onClick={() => setJoined(true)}>Join</button>
+            <div>
+                <HomeHeader />
+                <div className="home-body">
+                    <div className="welcome-text">
+                        <h1 className="hey-text">Hey</h1>
+                        <Typing
+                            className="typing-text"
+                            text={[
+                                "How are you?",
+                                "Let's talk",
+                                "Need a friend?",
+                            ]}
+                        />
+                    </div>
+                    <div className="vl"></div>
+                    <div className="home-login">
+                        <textarea
+                            name="DisplayName"
+                            className="display-name"
+                            placeholder="Enter your display name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        ></textarea>
+                        <button onClick={handleJoin}>
+                            Chat as {name || "Guest"}
+                        </button>
+                    </div>
                 </div>
-            </>
+            </div>
         );
     }
 

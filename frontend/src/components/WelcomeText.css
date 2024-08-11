@@ -1,0 +1,21 @@
+.welcome-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0 2rem;
+    height: 100%;
+    width: 40%;
+    /* max-width: 500px; */
+}
+
+.hey-text {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.typing-text {
+    font-size: 2rem;
+    color: gray;
+}
