@@ -70,7 +70,7 @@ export const Room: React.FC<RoomProps> = ({
                 <h1>Welcome, {name}</h1>
                 <div>You are connected with {connectedUserName}</div>
             </header>
-            <MessageList messages={messages} />
+            <MessageList messages={messages} currentUser={name} />
             <MessageInput
                 currentMessage={currentMessage}
                 setCurrentMessage={setCurrentMessage}

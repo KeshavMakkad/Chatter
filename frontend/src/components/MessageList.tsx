@@ -8,15 +8,27 @@ interface Message {
 
 interface MessageListProps {
     messages: Message[];
+    currentUser: string;
 }
 
-export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
+export const MessageList: React.FC<MessageListProps> = ({
+    messages,
+    currentUser,
+}) => {
     return (
         <div className="message-list">
             {messages.map((msg, index) => (
-                <p key={index} className="message">
-                    <strong>{msg.senderName}:</strong> {msg.message}
-                </p>
+                <div
+                    key={index}
+                    className={`message-container ${
+                        msg.senderName === currentUser ? "sent" : "received"
+                    }`}
+                >
+                    <div className="message-bubble">
+                        <p className="sender-name">{msg.senderName}</p>
+                        <p className="message-text">{msg.message}</p>
+                    </div>
+                </div>
             ))}
         </div>
     );
