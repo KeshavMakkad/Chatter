@@ -1,10 +1,18 @@
 import { Socket } from "socket.io";
 import http from "http";
 import express from "express";
+import path from "path";
 import { Server } from "socket.io";
 import { UserManager } from "./managers/UserManager";
 
 const app = express();
+
+app.use(express.static("./frontend/dist"));
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "./frontend/dist/index.html"));
+});
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
