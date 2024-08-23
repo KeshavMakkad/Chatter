@@ -1,18 +1,24 @@
 import { connect } from "mongoose";
 import { config } from "dotenv";
+import path from "path";
 
-config();
+// Log the path to verify correctness
+console.log("Path to .env:", path.resolve(__dirname, "../.env"));
 
-console.log("MONGODB_URI:", process.env.MONGODB_URI); // Add this line
+// Specify the path to the .env file one directory above the backend folder
+config({ path: path.resolve(__dirname, "../../.env") });
 
 export const startDB = async () => {
     const mongodbUri = process.env.MONGODB_URI;
 
     if (mongodbUri) {
-        await connect(mongodbUri);
-        console.log("DB connection successful");
+        try {
+            await connect(mongodbUri);
+            console.log("DB connection successful");
+        } catch (error) {
+            console.error("DB connection failed:", error);
+        }
     } else {
-        // throw new Error("MONGODB_URI is not defined.");
-        console.log(mongodbUri);
+        console.log("MONGODB_URI is not defined.");
     }
 };
