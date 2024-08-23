@@ -4,6 +4,7 @@ import express from "express";
 import path from "path";
 import { Server } from "socket.io";
 import { UserManager } from "./managers/UserManager";
+import { startDB } from "./db";
 
 const app = express();
 
@@ -21,10 +22,12 @@ const io = new Server(server, {
     },
 });
 
-const userManager = new UserManager();
+const userManager = new UserManager(io); // Pass io to UserManager
+
+startDB();
 
 io.on("connection", (socket: Socket) => {
-    console.log("a user connected");
+    console.log("A user connected");
 
     socket.on("join-lobby", ({ name }) => {
         console.log("Received join-lobby with name:", name);
@@ -32,7 +35,7 @@ io.on("connection", (socket: Socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log("user disconnected");
+        console.log("User disconnected");
         userManager.removeUser(socket.id);
     });
 
@@ -40,5 +43,5 @@ io.on("connection", (socket: Socket) => {
 });
 
 server.listen(3000, () => {
-    console.log("listening on *:3000");
+    console.log("Listening on *:3000");
 });

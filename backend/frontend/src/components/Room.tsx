@@ -1,7 +1,7 @@
 import React from "react";
 import { Socket } from "socket.io-client";
-import { MessageList } from "./MessageList";
-import { MessageInput } from "./MessageInput";
+import { MessageList } from "./UI/MessageList";
+import { MessageInput } from "./UI/MessageInput";
 import "./Room.css";
 
 interface RoomProps {

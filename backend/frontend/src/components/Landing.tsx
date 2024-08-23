@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
-import HomeHeader from "./HomeHeader.tsx";
-import "./Home.css";
-import "./HomeLogin.css";
-import "./WelcomeText.css";
+import HomeHeader from "./UI/HomeHeader.tsx";
+import "./UI/Home.css";
+import "./UI/HomeLogin.css";
+import "./UI/WelcomeText.css";
 import { Room } from "./Room";
-import Typing from "./Typing.tsx";
+import Typing from "./UI/Typing.tsx";
 
 const URL = "http://localhost:3000";
 

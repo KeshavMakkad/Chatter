@@ -1,66 +1,63 @@
 import { Socket } from "socket.io";
 import { RoomManager } from "./RoomManager";
+import { UserModel } from "./UserModel";
+import { Server } from "socket.io";
 
 export interface User {
-    socket: Socket;
+    socketId: string;
     name: string;
 }
 
 export class UserManager {
-    getUsers(): any {
-        throw new Error("Method not implemented.");
-    }
-    private users: User[];
-    private queue: string[];
     private roomManager: RoomManager;
 
-    constructor() {
-        this.users = [];
-        this.queue = [];
-        this.roomManager = new RoomManager();
+    constructor(io: Server) {
+        this.roomManager = new RoomManager(io);
     }
 
-    addUser(name: string, socket: Socket) {
+    async addUser(name: string, socket: Socket) {
         console.log("User added", name);
-        this.users.push({ name, socket });
-        this.queue.push(socket.id);
+
+        const newUser = new UserModel({
+            user: {
+                name,
+                socketId: socket.id,
+            },
+        });
+
+        await newUser.save();
         socket.emit("lobby");
-        this.clearQueue();
+        await this.clearQueue();
         this.initHandlers(socket);
     }
 
-    removeUser(socketId: string) {
-        this.users = this.users.filter((x) => x.socket.id !== socketId);
-        this.queue = this.queue.filter((x) => x !== socketId);
+    async removeUser(socketId: string) {
+        await UserModel.deleteOne({ "user.socketId": socketId });
     }
 
-    clearQueue() {
-        if (this.queue.length < 2) {
-            return;
+    async clearQueue() {
+        const usersCount = await UserModel.countDocuments();
+        if (usersCount < 2) return;
+
+        const randomUsers = await UserModel.aggregate([
+            { $sample: { size: 2 } },
+        ]);
+
+        if (randomUsers.length === 2) {
+            const [user1, user2] = randomUsers;
+            await this.roomManager.createRoom(user1.user, user2.user);
+
+            await UserModel.deleteMany({
+                _id: { $in: [user1._id, user2._id] },
+            });
         }
 
-        const id1 = this.queue.shift();
-        const id2 = this.queue.shift();
-
-        const user1 = this.users.find((x) => {
-            // console.log(x.name, id1);
-            return x.socket.id === id1;
-        });
-        const user2 = this.users.find((x) => {
-            // console.log(x.name, id2);
-            return x.socket.id === id2;
-        });
-
-        if (user1 && user2) {
-            this.roomManager.createRoom(user1, user2);
-        }
-
-        this.clearQueue();
+        await this.clearQueue();
     }
 
     initHandlers(socket: Socket) {
-        socket.on("send-message", ({ message, roomId }) => {
-            this.roomManager.sendMessage(roomId, message, socket.id);
+        socket.on("send-message", async ({ message, roomId }) => {
+            await this.roomManager.sendMessage(roomId, message, socket.id);
         });
     }
 }
